@@ -34,7 +34,7 @@ contract Crowdfunding is ICrowdFunding, AbstractUtilityContract, Ownable {
     mapping(address => uint256) donationsHistory;
 
     /// @inheritdoc ICrowdFunding
-    function contribute() public payable {
+    function contribute() public payable override {
         if (poolReached) revert PoolHasReached();
         if (donationPool + msg.value > goal) revert InvalidValue();
 
@@ -50,7 +50,7 @@ contract Crowdfunding is ICrowdFunding, AbstractUtilityContract, Ownable {
     /// @dev Deploys VestingWallet and sends contract balance.
     /// @return Address of the deployed VestingWallet contract.
     function startVestingCheck() internal returns (address) {
-        address _vestingContractAddress  = address(0);
+        address _vestingContractAddress = address(0);
         if (donationPool == goal) {
             startTimestamp = block.timestamp;
             poolReached = true;
@@ -69,7 +69,7 @@ contract Crowdfunding is ICrowdFunding, AbstractUtilityContract, Ownable {
     }
 
     /// @inheritdoc ICrowdFunding
-    function refund(uint256 _value) external {
+    function refund(uint256 _value) external override {
         if (poolReached) revert PoolHasReachedAndYouCantRefund();
 
         uint256 userFunds = donationsHistory[msg.sender];
@@ -77,7 +77,7 @@ contract Crowdfunding is ICrowdFunding, AbstractUtilityContract, Ownable {
         if (userFunds == 0) revert NothingToRefund();
         if (userFunds < _value) revert AmountTooHigh();
 
-        (bool success, ) = payable(msg.sender).call{value : _value}("");
+        (bool success,) = payable(msg.sender).call{value: _value}("");
         if (!success) revert TransactionFailed();
 
         donationPool = donationPool - _value;
@@ -87,7 +87,7 @@ contract Crowdfunding is ICrowdFunding, AbstractUtilityContract, Ownable {
     }
 
     /// @inheritdoc ICrowdFunding
-    function withdraw() external {
+    function withdraw() external override {
         if (msg.sender != fundraiser) revert OnlyFundraiserAllowed();
         if (address(vestingWallet) == address(0)) revert VestingNotStarted();
 
@@ -125,7 +125,7 @@ contract Crowdfunding is ICrowdFunding, AbstractUtilityContract, Ownable {
         address _fundraiser,
         uint64 _vestingTime,
         address _owner
-    ) external pure returns (bytes memory) {
+    ) external pure override returns (bytes memory) {
         return abi.encode(_deployManager, _goal, _fundraiser, _vestingTime, _owner);
     }
 }

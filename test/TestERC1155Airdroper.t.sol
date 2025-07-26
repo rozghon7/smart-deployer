@@ -5,6 +5,7 @@ import {Test, console} from "forge-std/Test.sol";
 import {DeployManager} from "../src/DeployManager/DeployManager.sol";
 import {ERC1155Airdroper} from "../src/ERC1155Airdroper/ERC1155Airdroper.sol";
 import {MockToken} from "../src/MocksForTest/TestMockERC1155.sol";
+import {IERC1155Airdroper} from "../src/ERC1155Airdroper/IERC1155Airdroper.sol";
 
 contract TestERC721Airdroper is Test {
     DeployManager depManager;
@@ -62,7 +63,7 @@ contract TestERC721Airdroper is Test {
 
         tokenIds.push(1);
 
-        vm.expectRevert(ERC1155Airdroper.ArraysLengthMismatch.selector);
+        vm.expectRevert(IERC1155Airdroper.ArraysLengthMismatch.selector);
         airdroper.airdrop(receivers, amounts, tokenIds);
 
         tokenIds.push(2);
@@ -100,7 +101,7 @@ contract TestERC721Airdroper is Test {
         tokenIds.push(10);
         tokenIds.push(11);
 
-        vm.expectRevert(ERC1155Airdroper.IterationsQuantityMismatch.selector);
+        vm.expectRevert(IERC1155Airdroper.IterationsQuantityMismatch.selector);
         airdroper.airdrop(receivers, amounts, tokenIds);
     }
 
@@ -130,7 +131,7 @@ contract TestERC721Airdroper is Test {
 
         vm.startPrank(contractOwner);
         vm.expectEmit(false, false, false, true);
-        emit ERC1155Airdroper.AirdropSent(block.timestamp);
+        emit IERC1155Airdroper.AirdropSent(block.timestamp);
         deployedAirdroperInstance.airdrop(receivers, amounts, tokenIds);
     }
 }

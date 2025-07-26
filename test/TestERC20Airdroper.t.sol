@@ -4,6 +4,7 @@ pragma solidity ^0.8.29;
 import {Test, console} from "forge-std/Test.sol";
 import {DeployManager} from "../src/DeployManager/DeployManager.sol";
 import {ERC20Airdroper} from "../src/ERC20Airdroper/ERC20Airdroper.sol";
+import {IERC20Airdroper} from "../src/ERC20Airdroper/IERC20Airdroper.sol";
 import {TokenMock} from "../src/MocksForTest/TestMockERC20.sol";
 
 contract TestERC20Airdroper is Test {
@@ -59,7 +60,7 @@ contract TestERC20Airdroper is Test {
 
         amounts.push(17);
 
-        vm.expectRevert(ERC20Airdroper.ArraysLengthMismatch.selector);
+        vm.expectRevert(IERC20Airdroper.ArraysLengthMismatch.selector);
         airdroper.airdrop(receivers, amounts);
 
         amounts.push(17);
@@ -85,7 +86,7 @@ contract TestERC20Airdroper is Test {
         amounts.push(17);
         amounts.push(17);
 
-        vm.expectRevert(ERC20Airdroper.IterationsQuantityMismatch.selector);
+        vm.expectRevert(IERC20Airdroper.IterationsQuantityMismatch.selector);
         airdroper.airdrop(receivers, amounts);
     }
 
@@ -109,7 +110,7 @@ contract TestERC20Airdroper is Test {
 
         vm.startPrank(contractOwner);
         vm.expectEmit(false, false, false, true);
-        emit ERC20Airdroper.AirdropSent(block.timestamp);
+        emit IERC20Airdroper.AirdropSent(block.timestamp);
         deployedAirdroperInstance.airdrop(receivers, amounts);
     }
 }

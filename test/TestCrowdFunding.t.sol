@@ -28,7 +28,8 @@ contract TestCrowdFunding is Test {
 
         depManager.addNewContract(address(crowdfunding), 5, true);
 
-        bytes memory initData = crowdfunding.getInitData(address(depManager), 100 ether, fundraiser, 10000, address(contractOwner));
+        bytes memory initData =
+            crowdfunding.getInitData(address(depManager), 100 ether, fundraiser, 10000, address(contractOwner));
 
         vm.deal(contractOwner, 5);
         vm.startPrank(contractOwner);
@@ -41,12 +42,12 @@ contract TestCrowdFunding is Test {
         vm.startPrank(user1);
 
         vm.expectRevert(ICrowdFunding.InvalidValue.selector);
-        deployedCrowdfundingInstance.contribute{value : 105 ether}();
+        deployedCrowdfundingInstance.contribute{value: 105 ether}();
 
-        deployedCrowdfundingInstance.contribute{value : 100 ether}();
+        deployedCrowdfundingInstance.contribute{value: 100 ether}();
 
         vm.expectRevert(ICrowdFunding.PoolHasReached.selector);
-        deployedCrowdfundingInstance.contribute{value : 5 ether}();
+        deployedCrowdfundingInstance.contribute{value: 5 ether}();
     }
 
     function test_ContributeFunctionalityAndEventCheck() public {
@@ -56,7 +57,7 @@ contract TestCrowdFunding is Test {
 
         vm.expectEmit(true, false, false, true);
         emit ICrowdFunding.ContributionReceived(user1, 55 ether, block.timestamp);
-        deployedCrowdfundingInstance.contribute{value : 55 ether}();
+        deployedCrowdfundingInstance.contribute{value: 55 ether}();
 
         assertEq(deployedCrowdfundingInstance.donationPool(), 55 ether);
         assertFalse(deployedCrowdfundingInstance.poolReached());
@@ -67,7 +68,7 @@ contract TestCrowdFunding is Test {
 
         vm.expectEmit(true, false, false, true);
         emit ICrowdFunding.ContributionReceived(user2, 45 ether, block.timestamp);
-        deployedCrowdfundingInstance.contribute{value : 45 ether}();
+        deployedCrowdfundingInstance.contribute{value: 45 ether}();
 
         address vestingWalletAddress = address(deployedCrowdfundingInstance.vestingWallet());
         VestingWallet vestingInstance = VestingWallet(payable(vestingWalletAddress));
@@ -90,7 +91,7 @@ contract TestCrowdFunding is Test {
         vm.expectRevert(ICrowdFunding.NothingToRefund.selector);
         deployedCrowdfundingInstance.refund(10 ether);
 
-        deployedCrowdfundingInstance.contribute{value : 55 ether}();
+        deployedCrowdfundingInstance.contribute{value: 55 ether}();
 
         vm.expectRevert(ICrowdFunding.AmountTooHigh.selector);
         deployedCrowdfundingInstance.refund(65 ether);
@@ -99,7 +100,7 @@ contract TestCrowdFunding is Test {
         vm.deal(user2, 45 ether);
         vm.startPrank(user2);
 
-        deployedCrowdfundingInstance.contribute{value : 45 ether}();
+        deployedCrowdfundingInstance.contribute{value: 45 ether}();
 
         vm.expectRevert(ICrowdFunding.PoolHasReachedAndYouCantRefund.selector);
         deployedCrowdfundingInstance.refund(45 ether);
@@ -110,7 +111,7 @@ contract TestCrowdFunding is Test {
         vm.deal(user1, 55 ether);
         vm.startPrank(user1);
 
-        deployedCrowdfundingInstance.contribute{value : 55 ether}();
+        deployedCrowdfundingInstance.contribute{value: 55 ether}();
 
         vm.expectEmit(true, false, false, true);
         emit ICrowdFunding.RefundProcessed(user1, 25 ether, block.timestamp);
@@ -123,7 +124,7 @@ contract TestCrowdFunding is Test {
         vm.deal(user2, 45 ether);
         vm.startPrank(user2);
 
-        deployedCrowdfundingInstance.contribute{value : 45 ether}();
+        deployedCrowdfundingInstance.contribute{value: 45 ether}();
 
         vm.expectEmit(true, false, false, true);
         emit ICrowdFunding.RefundProcessed(user2, 45 ether, block.timestamp);
@@ -151,7 +152,7 @@ contract TestCrowdFunding is Test {
 
         vm.startPrank(user1);
         vm.deal(user1, 100 ether);
-        deployedCrowdfundingInstance.contribute{value : 100 ether}();
+        deployedCrowdfundingInstance.contribute{value: 100 ether}();
 
         assertTrue(fundraiser.balance == 0);
 
@@ -171,9 +172,9 @@ contract TestCrowdFunding is Test {
 
         vm.startPrank(user1);
         vm.deal(user1, 150 ether);
-        deployedCrowdfundingInstance.contribute{value : 100 ether}();
+        deployedCrowdfundingInstance.contribute{value: 100 ether}();
 
-        (bool success, ) = payable (address(deployedCrowdfundingInstance)).call{value : user1.balance}("");
+        (bool success,) = payable(address(deployedCrowdfundingInstance)).call{value: user1.balance}("");
         assertFalse(success, "Sending Ether after pool reached should revert");
     }
 
@@ -185,14 +186,14 @@ contract TestCrowdFunding is Test {
 
         vm.expectEmit(true, false, false, true);
         emit ICrowdFunding.ContributionReceived(user1, 25 ether, block.timestamp);
-        (bool success, ) = payable (address(deployedCrowdfundingInstance)).call{value : 25 ether}("");
+        (bool success,) = payable(address(deployedCrowdfundingInstance)).call{value: 25 ether}("");
         assertTrue(success);
 
         assertTrue(deployedCrowdfundingInstance.donationPool() == 25 ether);
 
         vm.expectEmit(true, false, false, true);
         emit ICrowdFunding.ContributionReceived(user1, 75 ether, block.timestamp);
-        (bool _success, ) = payable (address(deployedCrowdfundingInstance)).call{value : 75 ether}("");
+        (bool _success,) = payable(address(deployedCrowdfundingInstance)).call{value: 75 ether}("");
         assertTrue(_success);
 
         address vestingWalletAddress = address(deployedCrowdfundingInstance.vestingWallet());

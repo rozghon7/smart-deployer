@@ -25,7 +25,7 @@ contract Vesting is IVesting, AbstractUtilityContract, Ownable {
     mapping(address => IVesting.VestingInfo) public vestings;
 
     /// @inheritdoc IVesting
-    function claim() public {
+    function claim() external override {
         VestingInfo storage vesting = vestings[msg.sender];
 
         if (!vesting.created) revert VestingNotFound();
@@ -39,7 +39,7 @@ contract Vesting is IVesting, AbstractUtilityContract, Ownable {
             revert CooldownNotPassed(blocktimestamp, vesting.lastClaimTime);
         }
 
-        uint256 claimable = claimableAmount(msg.sender);
+        uint256 claimable = vesting.claimableAmount();
 
         if (claimable == 0) revert NothingToClaim();
         if (claimable < vesting.minClaimAmount) revert BelowMinimalClaimAmount(claimable, vesting.minClaimAmount);
@@ -56,17 +56,17 @@ contract Vesting is IVesting, AbstractUtilityContract, Ownable {
     }
 
     /// @inheritdoc IVesting
-    function vestedAmount(address _claimer) public view returns (uint256) {
+    function vestedAmount(address _claimer) external view override returns (uint256) {
         return vestings[_claimer].vestedAmount();
     }
 
     /// @inheritdoc IVesting
-    function claimableAmount(address _claimer) public view returns (uint256) {
+    function claimableAmount(address _claimer) external view override returns (uint256) {
         return vestings[_claimer].claimableAmount();
     }
 
     /// @inheritdoc IVesting
-    function startVesting(IVesting.VestingParameters calldata parameters) external onlyOwner {
+    function startVesting(IVesting.VestingParameters calldata parameters) external override onlyOwner {
         if (parameters.beneficiary == address(0)) revert InvalidBeneficiary();
         if (parameters.duration == 0) revert DurationCantBeZero();
         if (parameters.totalAmount == 0) revert AmountCantBeZero();
@@ -107,7 +107,7 @@ contract Vesting is IVesting, AbstractUtilityContract, Ownable {
     }
 
     /// @inheritdoc IVesting
-    function withdrawUnallocated(address _to) external onlyOwner {
+    function withdrawUnallocated(address _to) external override onlyOwner {
         uint256 available = token.balanceOf(address(this)) - allocatedTokens;
 
         if (available == 0) revert NothingToWithdraw();
@@ -130,7 +130,12 @@ contract Vesting is IVesting, AbstractUtilityContract, Ownable {
     }
 
     /// @inheritdoc IVesting
-    function getInitData(address _deployManager, address _token, address _owner) external pure returns (bytes memory) {
+    function getInitData(address _deployManager, address _token, address _owner)
+        external
+        pure
+        override
+        returns (bytes memory)
+    {
         return abi.encode(_deployManager, _token, _owner);
     }
 }

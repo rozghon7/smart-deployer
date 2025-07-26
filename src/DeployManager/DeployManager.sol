@@ -88,7 +88,7 @@ contract DeployManager is IDeployManager, Ownable, ERC165 {
     }
 
     /// @inheritdoc IDeployManager
-    function getContractInfo(address _address) external view returns (ContractInfo memory) {
+    function getContractInfo(address _address) external view override returns (ContractInfo memory) {
         return contractsData[_address];
     }
 }
