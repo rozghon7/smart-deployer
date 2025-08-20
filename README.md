@@ -181,6 +181,8 @@ For any inquiries or collaborations, feel free to reach out:
 
 GitHub: rozghon7
 
+LinkedIn: https://www.linkedin.com/in/mykyta-rozghon-b1671637a/
+
 Email: rozgonnni@gmail.com
 
 LinkedIn: https://www.linkedin.com/in/mykyta-rozghon-7900a6374/
